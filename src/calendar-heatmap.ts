@@ -4,6 +4,11 @@ import { Component, Input, Output, EventEmitter, ViewChild, HostListener } from 
 declare var d3: any;
 declare var moment: any;
 
+export enum CellShape {
+  CIRCLE,
+  SQUARE
+}
+
 @Component({
   selector: 'calendar-heatmap',
   template: `<div #root></div>`,
@@ -68,11 +73,12 @@ declare var moment: any;
 export class CalendarHeatmap  {
   @ViewChild('root') element: any;
 
-  @Input() data: Array<object>;
+  @Input() data: Array<Object>;
   @Input() color: string = '#ff4500';
   @Input() overview: string = 'year';
+  @Input() shape: CellShape = CellShape.CIRCLE;
 
-  @Output() handler: EventEmitter<object> = new EventEmitter<object>();
+  @Output() handler: EventEmitter<Object> = new EventEmitter<Object>();
 
   // Defaults
   private gutter: number = 5;
@@ -259,10 +265,20 @@ export class CalendarHeatmap  {
         return this.calcItemY(d) + (this.item_size - this.calcItemSize(d, max_value)) / 2;
       })
       .attr('rx', (d: any) => {
-        return this.calcItemSize(d, max_value);
+        if (this.shape === CellShape.CIRCLE) {
+          return this.calcItemSize(d, max_value);
+        }
+        else if (this.shape === CellShape.SQUARE) {
+          return 0;
+        }
       })
       .attr('ry', (d: any) => {
-        return this.calcItemSize(d, max_value);
+        if (this.shape === CellShape.CIRCLE) {
+          return this.calcItemSize(d, max_value);
+        }
+        else if (this.shape === CellShape.SQUARE) {
+          return 0;
+        }
       })
       .attr('width', (d: any) => {
         return this.calcItemSize(d, max_value);
