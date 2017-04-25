@@ -62,6 +62,14 @@ export enum CellShape {
       padding-right: 10px;
       box-sizing: border-box;
     }
+    /*
+    :host >>> .heatmap-tooltip span .value {
+      display: inline-block;
+      width: 30%;
+      padding-right: 10px;
+      box-sizing: border-box;
+    }
+    */
     :host >>> .heatmap-tooltip span,
     :host >>> .heatmap-tooltip .header strong {
       white-space: nowrap;
@@ -77,6 +85,7 @@ export class CalendarHeatmap  {
   @Input() color: string = '#ff4500';
   @Input() overview: string = 'year';
   @Input() shape: CellShape = CellShape.CIRCLE;
+  @Input() metricName: string;
 
   @Output() handler: EventEmitter<Object> = new EventEmitter<Object>();
 
@@ -348,13 +357,13 @@ export class CalendarHeatmap  {
 
         // Construct tooltip
         var tooltip_html = '';
-        tooltip_html += '<div class="header"><strong>' + (d.total ? this.formatTime(d.total) : 'No time') + ' tracked</strong></div>';
-        tooltip_html += '<div>on ' + moment(d.date).format('dddd, MMM Do YYYY') + '</div><br>';
+        tooltip_html += '<div class="header"><strong>' + (d.total ? d.total : 'No') + ' ' + this.metricName + '</strong></div>';
+        tooltip_html += '<div>on ' + moment(d.date).format('ddd, MMM Do YYYY') + '</div><br>';
 
         // Add summary to the tooltip
         d.summary.map((d: any) => {
-          tooltip_html += '<div><span><strong>' + d.name + '</strong></span>';
-          tooltip_html += '<span>' + this.formatTime(d.value) + '</span></div>';
+          tooltip_html += '<div><span class="category"><strong>' + d.name + '</strong></span>';
+          tooltip_html += '<span class="value">' + d.value + '</span></div>';
         });
 
         // Calculate tooltip position
@@ -670,8 +679,9 @@ export class CalendarHeatmap  {
         // Construct tooltip
         var tooltip_html = '';
         tooltip_html += '<div class="header"><strong>' + d.name + '</strong></div><br>';
-        tooltip_html += '<div><strong>' + (d.value ? this.formatTime(d.value) : 'No time') + ' tracked</strong></div>';
-        tooltip_html += '<div>on ' + moment(date).format('dddd, MMM Do YYYY') + '</div>';
+        tooltip_html += '<div<strong>' + (d.total ? d.total : 'No') + ' ' + this.metricName + '</strong></div>';
+        tooltip_html += '<div>on ' + moment(d.date).format('ddd, MMM Do YYYY') + '</div>';
+
 
         // Calculate tooltip position
         var x = weekScale(moment(date).week()) + this.tooltip_padding;
